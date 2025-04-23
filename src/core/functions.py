@@ -16,7 +16,7 @@ from mailmerge import MailMerge
 from pandas import DataFrame
 
 from core.classes import Template, Work
-from core.config import (ACCOUNT0, ARCHIVE_NAME, FILE_NAME_RESERVED,
+from core.config import (ACCOUNT0, ARCHIVE_NAME, BASE_DIR, FILE_NAME_RESERVED,
                          MERGE_HOOK, PARTNER_NAME, PREFIX, REF_PLACEHOLDER,
                          RESERVED_REF)
 
@@ -84,12 +84,10 @@ def generate_string_panel(config: Work, two_columned=False) -> list:
     return panel
 
 
-def get_paths() -> tuple[str]:
-    # =========================================================================
-    # TODO: Wrap in `Path`
-    # =========================================================================
-    with open('../PATHS.txt', mode='r', encoding='utf-8') as lines:
-        return tuple(map(lambda _: _.split('\n')[0], lines.readlines()))
+def get_paths(file_name: str = 'paths.txt') -> tuple[Path]:
+    file_path = BASE_DIR.joinpath('core').joinpath(file_name)
+    with file_path.open(encoding='utf-8') as f:
+        return tuple(Path(line.strip() for line in f if line.strip()))
 
 
 def transform_stringify(df: DataFrame) -> DataFrame:

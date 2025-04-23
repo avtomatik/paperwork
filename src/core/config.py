@@ -1,3 +1,7 @@
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+
 ARCHIVE_NAME = 'template_local_endorsement.zip'
 ARCHIVE_NAME = 'template_local_slip.zip'
 ARCHIVE_NAME = 'templates.zip'
