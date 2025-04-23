@@ -10,7 +10,7 @@ import sys
 
 import pandas as pd
 
-from core.constants import FILE_NAME
+from core.config import FILE_NAME
 
 
 def confirm_action(message: str) -> bool:

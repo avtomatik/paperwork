@@ -11,31 +11,35 @@ from pathlib import Path
 
 import pandas as pd
 
-from core.classes import Configuration, Data, Template
+from core.classes import Data, Template, Work
 from core.functions import (business_logic, get_paths, transform_stringify,
                             write_to_disk)
 
 
-def main(config: Configuration) -> None:
+def main(work: Work) -> None:
     kwargs = {
-        'io': Path(config.source).joinpath(config.data.file_name)
+        'io': Path(work.source).joinpath(work.data.file_name)
     }
-    df = pd.read_excel(**kwargs).tail(config.num).pipe(business_logic)
+    df = pd.read_excel(**kwargs).tail(work.num).pipe(business_logic)
     df_formatted = df.copy().pipe(transform_stringify)
 
     # =========================================================================
     # Main Loop
     # =========================================================================
-    for _ in range(df.shape[0]):
+    for index, row in df_formatted.iterrows():
         # =====================================================================
         # Populate Fields' Map
         # =====================================================================
         map_fields_extension = {'': ''}
-        map_fields = dict(df_formatted.iloc[_, :]) | map_fields_extension
+        map_fields = dict(row) | map_fields_extension
+
         # =====================================================================
         # Write to Disk
         # =====================================================================
-        write_to_disk(config, df, _, map_fields)
+        # =====================================================================
+        # TODO: Remove Dependence on pandas.DataFrame
+        # =====================================================================
+        write_to_disk(work, df, index, row, map_fields)
 
 
 if __name__ == '__main__':
@@ -47,7 +51,7 @@ if __name__ == '__main__':
     # =========================================================================
     # Purpose: Acts & Scopes
     # =========================================================================
-    config = Configuration(
+    config = Work(
         ROWS,
         PATHS[3],
         PATHS[7],
@@ -58,7 +62,7 @@ if __name__ == '__main__':
     # =========================================================================
     # Purpose: Addendums & Endorsements
     # =========================================================================
-    config = Configuration(
+    config = Work(
         ROWS,
         PATHS[3],
         PATHS[-1],
@@ -69,7 +73,7 @@ if __name__ == '__main__':
     # =========================================================================
     # Purpose: Confirmation Letters
     # =========================================================================
-    config = Configuration(
+    config = Work(
         ROWS,
         PATHS[3],
         PATHS[-1],
@@ -80,7 +84,7 @@ if __name__ == '__main__':
     # =========================================================================
     # Purpose: Debit Notes
     # =========================================================================
-    config = Configuration(
+    config = Work(
         ROWS,
         PATHS[3],
         PATHS[-1],
@@ -91,7 +95,7 @@ if __name__ == '__main__':
     # =========================================================================
     # Purpose: 0x9
     # =========================================================================
-    config = Configuration(
+    config = Work(
         ROWS,
         PATHS[3],
         PATHS[-1],
@@ -102,7 +106,7 @@ if __name__ == '__main__':
     # =========================================================================
     # Purpose: Slips & Cover Notes
     # =========================================================================
-    config = Configuration(
+    config = Work(
         ROWS,
         PATHS[3],
         PATHS[-1],
@@ -113,7 +117,7 @@ if __name__ == '__main__':
     # =========================================================================
     # Purpose: Special Acceptance
     # =========================================================================
-    config = Configuration(
+    config = Work(
         ROWS,
         PATHS[3],
         PATHS[-1],
@@ -124,7 +128,7 @@ if __name__ == '__main__':
     # =========================================================================
     # Purpose: Treaty Slips & Treaty Endorsements
     # =========================================================================
-    config = Configuration(
+    config = Work(
         ROWS,
         PATHS[3],
         PATHS[-1],
@@ -135,7 +139,7 @@ if __name__ == '__main__':
     # =========================================================================
     # Purpose: Warranty Letters
     # =========================================================================
-    config = Configuration(
+    config = Work(
         ROWS,
         PATHS[3],
         PATHS[-1],

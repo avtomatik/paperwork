@@ -2,7 +2,7 @@ import datetime
 from dataclasses import dataclass
 from enum import Enum, auto
 
-from core.constants import ACCOUNT0
+from core.config import ACCOUNT0
 
 
 class Data(Enum):
@@ -57,7 +57,7 @@ class Template(Enum):
 
 
 @dataclass
-class Configuration:
+class Work:
     num: int
     source: str
     destination: str

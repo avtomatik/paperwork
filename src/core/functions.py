@@ -1,3 +1,10 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Wed Apr 23 20:50:18 2025
+
+@author: alexandermikhailov
+"""
 
 
 import datetime
@@ -8,10 +15,10 @@ import pandas as pd
 from mailmerge import MailMerge
 from pandas import DataFrame
 
-from core.classes import Configuration, Template
-from core.constants import (ACCOUNT0, ARCHIVE_NAME, FILE_NAME_RESERVED,
-                            MERGE_HOOK, PARTNER_NAME, PREFIX, REF_PLACEHOLDER,
-                            RESERVED_REF)
+from core.classes import Template, Work
+from core.config import (ACCOUNT0, ARCHIVE_NAME, FILE_NAME_RESERVED,
+                         MERGE_HOOK, PARTNER_NAME, PREFIX, REF_PLACEHOLDER,
+                         RESERVED_REF)
 
 
 def business_logic(df: DataFrame) -> DataFrame:
@@ -62,14 +69,18 @@ def generate_file_name(template: Template, df: DataFrame, row: int) -> str:
     return MAP.get(template) or 'default.docx'
 
 
-def generate_string_panel(config: Configuration, two_columned=False) -> list:
+def generate_string_panel(config: Work, two_columned=False) -> list:
     lines = pd.read_excel(Path(config.source).joinpath(FILE_NAME_RESERVED))
+
     panel = []
-    for _ in range(lines.shape[0]):
-        lines.iloc[_, -1] = f'{lines.iloc[_, -1]:.7%}'
+
+    for _, row in lines.iterrows():
+        formatted_row = row.copy()
+        formatted_row.iloc[-1] = f'{row.iloc[-1]:.7%}'
         if two_columned:
-            lines.iloc[_, -2] = f'-\xa0{lines.iloc[_, -2]};'
-        panel.append(lines.iloc[_, -2:].to_dict())
+            formatted_row.iloc[-2] = f'-\xa0{row.iloc[-2]};'
+        panel.append(formatted_row.iloc[-2:].to_dict())
+
     return panel
 
 
@@ -113,7 +124,15 @@ def transform_stringify(df: DataFrame) -> DataFrame:
     return df
 
 
-def write_to_disk(config: Configuration, df: DataFrame, row: int, map_fields: dict[str, str]) -> None:
+def write_to_disk(
+    config: Work,
+    df: DataFrame,
+    row: int,
+    map_fields: dict[str, str]
+) -> None:
+    # =========================================================================
+    # TODO: Remove Dependence on pandas.DataFrame
+    # =========================================================================
     if ARCHIVE_NAME is None:
         template_object = Path(config.source).joinpath(
             config.template.template_name
