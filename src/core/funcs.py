@@ -87,7 +87,7 @@ def generate_string_panel(config: Work, two_columned=False) -> list:
 def get_paths(file_name: str = 'paths.txt') -> tuple[Path]:
     file_path = BASE_DIR.joinpath('core').joinpath(file_name)
     with file_path.open(encoding='utf-8') as f:
-        return tuple(Path(line.strip() for line in f if line.strip()))
+        return tuple(Path(line.strip()) for line in f if line.strip())
 
 
 def transform_stringify(df: DataFrame) -> DataFrame:

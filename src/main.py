@@ -12,8 +12,8 @@ from pathlib import Path
 import pandas as pd
 
 from core.classes import Data, Template, Work
-from core.functions import (business_logic, get_paths, transform_stringify,
-                            write_to_disk)
+from core.funcs import (business_logic, get_paths, transform_stringify,
+                        write_to_disk)
 
 
 def main(work: Work) -> None:
