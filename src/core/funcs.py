@@ -50,18 +50,12 @@ def generate_file_name(template: Template, row: pd.Series, index: int) -> str:
     today = datetime.date.today()
 
     MAP = {
-        Template.ACT:
-        (
-            f'Contract {PARTNER_NAME} Act {row[0]:%Y-%m}.docx'
-        ),
+        Template.ACT: f'Contract {PARTNER_NAME} Act {row[0]:%Y-%m}.docx',
         Template.ADDENDUM:
         (
             f'{REF_PLACEHOLDER} Addendum {row[6]:04n}-{today}.docx'
         ),
-        Template.COVER_NOTE:
-        (
-            f'{row[23]} {row[10]:%Y} Cover Note.docx'
-        ),
+        Template.COVER_NOTE: f'{row[23]} {row[10]:%Y} Cover Note.docx',
         Template.DEBIT_NOTE:
         (
             f'{REF_PLACEHOLDER} '
@@ -74,41 +68,22 @@ def generate_file_name(template: Template, row: pd.Series, index: int) -> str:
             f'{REF_PLACEHOLDER} Endorsement {row[6]:04n}-'
             f'{index:04n}.docx'
         ),
-        Template.LETTER:
-        (
-            f'{row[5]} {row[11]:%Y} Official Letter.docx'
-        ),
-        Template.LETTER_0x9:
-        (
-            f'{row[2]:} {row[11]:%Y} 0x9.docx'
-        ),
-        Template.LETTER_CEM:
-        (
-            f'{row[5]} {row[11]:%Y} CEM.docx'
-        ),
+        Template.LETTER: f'{row[5]} {row[11]:%Y} Official Letter.docx',
+        Template.LETTER_0x9: f'{row[2]:} {row[11]:%Y} 0x9.docx',
+        Template.LETTER_CEM: f'{row[5]} {row[11]:%Y} CEM.docx',
         Template.LETTER_FIRM_ORDER:
         (
             f'{row[5]} {row[11]:%Y} Firm Order Response.docx'
         ),
-        Template.LETTER_WARRANTY:
-        (
-            f'{row[2]} {row[1]:%Y} Warranty Letter.docx'
-        ),
+        Template.LETTER_WARRANTY: f'{row[2]} {row[1]:%Y} Warranty Letter.docx',
         Template.NDA: 'to_do.docx',
-        Template.SCOPES:
-        (
-            f'Contract {PARTNER_NAME} Scopes {row[0]:%Y-%m}.docx'
-        ),
+        Template.SCOPES: f'Contract {PARTNER_NAME} Scopes {row[0]:%Y-%m}.docx',
         Template.SERVICES_ACT:
         (
             f'Services Act {row[0].split(";")[1]} '
             f'{row[8]:%Y-%m}-{row[3]:04n}.docx'
         ),
-        Template.SLIP:
-        (
-            f'{row[23]} {row[10]:%Y} Slip '
-            f'{row[21]}.docx'
-        ),
+        Template.SLIP: f'{row[23]} {row[10]:%Y} Slip {row[21]}.docx',
         Template.SLIP_TREATY:
         (
             f'{ACCOUNT0} Primary Treaty {RESERVED_REF} {row[10]:%Y} '
