@@ -48,25 +48,81 @@ def generate_file_name(template: Template, df: DataFrame, row: int) -> str:
     # =========================================================================
     # TODO: Complete This Function
     # =========================================================================
+    today = datetime.date.today()
+
     MAP = {
-        Template.ACT: f'Contract {PARTNER_NAME} Act {df.iloc[row, 0]:%Y-%m}.docx',
-        Template.ADDENDUM: f'{REF_PLACEHOLDER} Addendum {df.iloc[row, 6]:04n}-{datetime.date.today()}.docx',
-        Template.COVER_NOTE: f'{df.iloc[row, 23]} {df.iloc[row, 10]:%Y} Cover Note.docx',
-        Template.DEBIT_NOTE: f'{REF_PLACEHOLDER} {"Debit" if df.iloc[row, 16] >= 0 else "Advice"} Note {df.iloc[row, 7]:06n}{"PRM" if df.iloc[row, 16] >= 0 else "RPM"}.docx',
-        Template.ENDORSEMENT: f'{REF_PLACEHOLDER} Endorsement {df.iloc[row, 6]:04n}-{row:04n}.docx',
-        Template.LETTER: f'{df.iloc[row, 5]} {df.iloc[row, 11]:%Y} Official Letter.docx',
-        Template.LETTER_0x9: f'{df.iloc[row, 2]:} {df.iloc[row, 11]:%Y} 0x9.docx',
-        Template.LETTER_CEM: f'{df.iloc[row, 5]} {df.iloc[row, 11]:%Y} CEM.docx',
-        Template.LETTER_FIRM_ORDER: f'{df.iloc[row, 5]} {df.iloc[row, 11]:%Y} Firm Order Response.docx',
-        Template.LETTER_WARRANTY: f'{df.iloc[row, 2]} {df.iloc[row, 1]:%Y} Warranty Letter.docx',
+        Template.ACT:
+        (
+            f'Contract {PARTNER_NAME} Act {df.iloc[row, 0]:%Y-%m}.docx'
+        ),
+        Template.ADDENDUM:
+        (
+            f'{REF_PLACEHOLDER} Addendum {df.iloc[row, 6]:04n}-{today}.docx'
+        ),
+        Template.COVER_NOTE:
+        (
+            f'{df.iloc[row, 23]} {df.iloc[row, 10]:%Y} Cover Note.docx'
+        ),
+        Template.DEBIT_NOTE:
+        (
+            f'{REF_PLACEHOLDER} '
+            f'{"Debit" if df.iloc[row, 16] >= 0 else "Advice"} Note '
+            f'{df.iloc[row, 7]:06n}'
+            f'{"PRM" if df.iloc[row, 16] >= 0 else "RPM"}.docx'
+        ),
+        Template.ENDORSEMENT:
+        (
+            f'{REF_PLACEHOLDER} Endorsement {df.iloc[row, 6]:04n}-'
+            f'{row:04n}.docx'
+        ),
+        Template.LETTER:
+        (
+            f'{df.iloc[row, 5]} {df.iloc[row, 11]:%Y} Official Letter.docx'
+        ),
+        Template.LETTER_0x9:
+        (
+            f'{df.iloc[row, 2]:} {df.iloc[row, 11]:%Y} 0x9.docx'
+        ),
+        Template.LETTER_CEM:
+        (
+            f'{df.iloc[row, 5]} {df.iloc[row, 11]:%Y} CEM.docx'
+        ),
+        Template.LETTER_FIRM_ORDER:
+        (
+            f'{df.iloc[row, 5]} {df.iloc[row, 11]:%Y} Firm Order Response.docx'
+        ),
+        Template.LETTER_WARRANTY:
+        (
+            f'{df.iloc[row, 2]} {df.iloc[row, 1]:%Y} Warranty Letter.docx'
+        ),
         Template.NDA: 'to_do.docx',
-        Template.SCOPES: f'Contract {PARTNER_NAME} Scopes {df.iloc[row, 0]:%Y-%m}.docx',
-        Template.SERVICES_ACT: f'Services Act {df.iloc[row, 0].split(";")[1]} {df.iloc[row, 8]:%Y-%m}-{df.iloc[row, 3]:04n}.docx',
-        Template.SLIP: f'{df.iloc[row, 23]} {df.iloc[row, 10]:%Y} Slip {df.iloc[row, 21]}.docx',
-        Template.SLIP_TREATY: f'{ACCOUNT0} Primary Treaty {RESERVED_REF} {df.iloc[row, 10]:%Y} Endorsement {df.iloc[row, 3]:04n} {df.iloc[row, 21].split(";")[-1]}.docx',
-        Template.SPECIAL_ACCEPTANCE: f'{REF_PLACEHOLDER} Special Acceptance {df.iloc[row, 2]:04n}.docx',
+        Template.SCOPES:
+        (
+            f'Contract {PARTNER_NAME} Scopes {df.iloc[row, 0]:%Y-%m}.docx'
+        ),
+        Template.SERVICES_ACT:
+        (
+            f'Services Act {df.iloc[row, 0].split(";")[1]} '
+            f'{df.iloc[row, 8]:%Y-%m}-{df.iloc[row, 3]:04n}.docx'
+        ),
+        Template.SLIP:
+        (
+            f'{df.iloc[row, 23]} {df.iloc[row, 10]:%Y} Slip '
+            f'{df.iloc[row, 21]}.docx'
+        ),
+        Template.SLIP_TREATY:
+        (
+            f'{ACCOUNT0} Primary Treaty {RESERVED_REF} {df.iloc[row, 10]:%Y} '
+            f'Endorsement {df.iloc[row, 3]:04n} '
+            f'{df.iloc[row, 21].split(";")[-1]}.docx'
+        ),
+        Template.SPECIAL_ACCEPTANCE:
+        (
+            f'{REF_PLACEHOLDER} Special Acceptance {df.iloc[row, 2]:04n}.docx'
+        ),
     }
-    return MAP.get(template) or 'default.docx'
+
+    return MAP.get(template, 'default.docx')
 
 
 def generate_string_panel(config: Work, two_columned=False) -> list:
@@ -108,7 +164,9 @@ def transform_stringify(df: DataFrame) -> DataFrame:
         # # =====================================================================
         # # For Percentage Values
         # # =====================================================================
-        # df_formatted.loc[:, column] = df_formatted.loc[:, column].apply(lambda _: f'{_:.4%}')
+        # df_formatted.loc[:, column] = df_formatted.loc[:, column].apply(
+        #     lambda _: f'{_:.4%}'
+        # )
 
     for column in int_columns:
         # =====================================================================
