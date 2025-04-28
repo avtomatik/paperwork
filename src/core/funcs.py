@@ -13,7 +13,6 @@ from zipfile import ZipFile
 
 import pandas as pd
 from mailmerge import MailMerge
-from pandas import DataFrame
 
 from core.classes import Template, Work
 from core.config import (ACCOUNT0, ARCHIVE_NAME, BASE_DIR, FILE_NAME_RESERVED,
@@ -21,12 +20,12 @@ from core.config import (ACCOUNT0, ARCHIVE_NAME, BASE_DIR, FILE_NAME_RESERVED,
                          RESERVED_REF)
 
 
-def business_logic(df: DataFrame) -> DataFrame:
+def business_logic(df: pd.DataFrame) -> pd.DataFrame:
     """Update for More Refined Business Logic"""
     return df
 
 
-def generate_file_name(template: Template, df: DataFrame, row: int) -> str:
+def generate_file_name(template: Template, row: pd.Series, index: int) -> str:
     """
     Generate File Name
 
@@ -34,9 +33,9 @@ def generate_file_name(template: Template, df: DataFrame, row: int) -> str:
     ----------
     template : Template
         DESCRIPTION.
-    df : DataFrame
+    row : pd.Series
         DESCRIPTION.
-    row : int
+    index : int
         DESCRIPTION.
 
     Returns
@@ -53,72 +52,72 @@ def generate_file_name(template: Template, df: DataFrame, row: int) -> str:
     MAP = {
         Template.ACT:
         (
-            f'Contract {PARTNER_NAME} Act {df.iloc[row, 0]:%Y-%m}.docx'
+            f'Contract {PARTNER_NAME} Act {row[0]:%Y-%m}.docx'
         ),
         Template.ADDENDUM:
         (
-            f'{REF_PLACEHOLDER} Addendum {df.iloc[row, 6]:04n}-{today}.docx'
+            f'{REF_PLACEHOLDER} Addendum {row[6]:04n}-{today}.docx'
         ),
         Template.COVER_NOTE:
         (
-            f'{df.iloc[row, 23]} {df.iloc[row, 10]:%Y} Cover Note.docx'
+            f'{row[23]} {row[10]:%Y} Cover Note.docx'
         ),
         Template.DEBIT_NOTE:
         (
             f'{REF_PLACEHOLDER} '
-            f'{"Debit" if df.iloc[row, 16] >= 0 else "Advice"} Note '
-            f'{df.iloc[row, 7]:06n}'
-            f'{"PRM" if df.iloc[row, 16] >= 0 else "RPM"}.docx'
+            f'{"Debit" if row[16] >= 0 else "Advice"} Note '
+            f'{row[7]:06n}'
+            f'{"PRM" if row[16] >= 0 else "RPM"}.docx'
         ),
         Template.ENDORSEMENT:
         (
-            f'{REF_PLACEHOLDER} Endorsement {df.iloc[row, 6]:04n}-'
-            f'{row:04n}.docx'
+            f'{REF_PLACEHOLDER} Endorsement {row[6]:04n}-'
+            f'{index:04n}.docx'
         ),
         Template.LETTER:
         (
-            f'{df.iloc[row, 5]} {df.iloc[row, 11]:%Y} Official Letter.docx'
+            f'{row[5]} {row[11]:%Y} Official Letter.docx'
         ),
         Template.LETTER_0x9:
         (
-            f'{df.iloc[row, 2]:} {df.iloc[row, 11]:%Y} 0x9.docx'
+            f'{row[2]:} {row[11]:%Y} 0x9.docx'
         ),
         Template.LETTER_CEM:
         (
-            f'{df.iloc[row, 5]} {df.iloc[row, 11]:%Y} CEM.docx'
+            f'{row[5]} {row[11]:%Y} CEM.docx'
         ),
         Template.LETTER_FIRM_ORDER:
         (
-            f'{df.iloc[row, 5]} {df.iloc[row, 11]:%Y} Firm Order Response.docx'
+            f'{row[5]} {row[11]:%Y} Firm Order Response.docx'
         ),
         Template.LETTER_WARRANTY:
         (
-            f'{df.iloc[row, 2]} {df.iloc[row, 1]:%Y} Warranty Letter.docx'
+            f'{row[2]} {row[1]:%Y} Warranty Letter.docx'
         ),
         Template.NDA: 'to_do.docx',
         Template.SCOPES:
         (
-            f'Contract {PARTNER_NAME} Scopes {df.iloc[row, 0]:%Y-%m}.docx'
+            f'Contract {PARTNER_NAME} Scopes {row[0]:%Y-%m}.docx'
         ),
         Template.SERVICES_ACT:
         (
-            f'Services Act {df.iloc[row, 0].split(";")[1]} '
-            f'{df.iloc[row, 8]:%Y-%m}-{df.iloc[row, 3]:04n}.docx'
+            f'Services Act {row[0].split(";")[1]} '
+            f'{row[8]:%Y-%m}-{row[3]:04n}.docx'
         ),
         Template.SLIP:
         (
-            f'{df.iloc[row, 23]} {df.iloc[row, 10]:%Y} Slip '
-            f'{df.iloc[row, 21]}.docx'
+            f'{row[23]} {row[10]:%Y} Slip '
+            f'{row[21]}.docx'
         ),
         Template.SLIP_TREATY:
         (
-            f'{ACCOUNT0} Primary Treaty {RESERVED_REF} {df.iloc[row, 10]:%Y} '
-            f'Endorsement {df.iloc[row, 3]:04n} '
-            f'{df.iloc[row, 21].split(";")[-1]}.docx'
+            f'{ACCOUNT0} Primary Treaty {RESERVED_REF} {row[10]:%Y} '
+            f'Endorsement {row[3]:04n} '
+            f'{row[21].split(";")[-1]}.docx'
         ),
         Template.SPECIAL_ACCEPTANCE:
         (
-            f'{REF_PLACEHOLDER} Special Acceptance {df.iloc[row, 2]:04n}.docx'
+            f'{REF_PLACEHOLDER} Special Acceptance {row[2]:04n}.docx'
         ),
     }
 
@@ -146,7 +145,7 @@ def get_paths(file_name: str = 'paths.txt') -> tuple[Path]:
         return tuple(Path(line.strip()) for line in f if line.strip())
 
 
-def transform_stringify(df: DataFrame) -> DataFrame:
+def transform_stringify(df: pd.DataFrame) -> pd.DataFrame:
     datetime_columns = df.select_dtypes(include='datetime64').columns
     float_columns = df.select_dtypes(include='float64').columns
     int_columns = df.select_dtypes(include='int64').columns
@@ -182,13 +181,10 @@ def transform_stringify(df: DataFrame) -> DataFrame:
 
 def write_to_disk(
     config: Work,
-    df: DataFrame,
-    row: int,
+    row: pd.Series,
+    index: int,
     map_fields: dict[str, str]
 ) -> None:
-    # =========================================================================
-    # TODO: Remove Dependence on pandas.DataFrame
-    # =========================================================================
     if ARCHIVE_NAME is None:
         template_object = Path(config.source).joinpath(
             config.template.template_name
@@ -212,6 +208,6 @@ def write_to_disk(
                 # =========================================================
                 # Generate File Name
                 # =========================================================
-                generate_file_name(config.template, df, row)
+                generate_file_name(config.template, row, index)
             )
         )
