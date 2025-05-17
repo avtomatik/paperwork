@@ -1,6 +1,7 @@
 import datetime
 from dataclasses import dataclass
 from enum import Enum, auto
+from pathlib import Path
 
 from core.config import ACCOUNT
 
@@ -59,7 +60,7 @@ class Template(Enum):
 @dataclass
 class Work:
     num: int
-    dir_src: str
-    dir_dst: str
+    path_src: Path
+    path_dst: Path
     data_source: Data
     template: Template

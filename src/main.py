@@ -1,4 +1,3 @@
-
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
@@ -7,18 +6,16 @@ Created on Mon Jun 12 21:43:23 2023
 @author: green-machine
 """
 
-from pathlib import Path
-
 import pandas as pd
 
 from core.classes import Data, Template, Work
-from core.config import DATA_DIR, DST_DIR, DST_SPC_DIR
+from core.config import DATA_DIR, DST_PATH, DST_SPC_PATH
 from core.funcs import business_logic, transform_stringify, write_to_disk
 
 
 def main(work: Work) -> None:
     kwargs = {
-        'io': Path(work.dir_src).joinpath(work.data_source.file_name)
+        'io': work.path_src.joinpath(work.data_source.file_name)
     }
     df = pd.read_excel(**kwargs).tail(work.num).pipe(business_logic)
     df_formatted = df.copy().pipe(transform_stringify)
@@ -47,10 +44,10 @@ if __name__ == '__main__':
     # =========================================================================
     # Purpose: Acts & Scopes
     # =========================================================================
-    config = Work(
+    work = Work(
         ROWS,
         DATA_DIR,
-        DST_SPC_DIR,
+        DST_SPC_PATH,
         Data.COUNTRY,
         Template.SCOPES
     )
@@ -58,10 +55,10 @@ if __name__ == '__main__':
     # =========================================================================
     # Purpose: Addendums & Endorsements
     # =========================================================================
-    config = Work(
+    work = Work(
         ROWS,
         DATA_DIR,
-        DST_DIR,
+        DST_PATH,
         Data.CONTRACT,
         Template.ADDENDUM
     )
@@ -69,10 +66,10 @@ if __name__ == '__main__':
     # =========================================================================
     # Purpose: Confirmation Letters
     # =========================================================================
-    config = Work(
+    work = Work(
         ROWS,
         DATA_DIR,
-        DST_DIR,
+        DST_PATH,
         Data.LETTER,
         Template.LETTER_CEM
     )
@@ -80,10 +77,10 @@ if __name__ == '__main__':
     # =========================================================================
     # Purpose: Debit Notes
     # =========================================================================
-    config = Work(
+    work = Work(
         ROWS,
         DATA_DIR,
-        DST_DIR,
+        DST_PATH,
         Data.DEBIT_NOTE,
         Template.DEBIT_NOTE
     )
@@ -91,10 +88,10 @@ if __name__ == '__main__':
     # =========================================================================
     # Purpose: 0x9
     # =========================================================================
-    config = Work(
+    work = Work(
         ROWS,
         DATA_DIR,
-        DST_DIR,
+        DST_PATH,
         Data.LETTER,
         Template.LETTER_0x9
     )
@@ -102,10 +99,10 @@ if __name__ == '__main__':
     # =========================================================================
     # Purpose: Slips & Cover Notes
     # =========================================================================
-    config = Work(
+    work = Work(
         ROWS,
         DATA_DIR,
-        DST_DIR,
+        DST_PATH,
         Data.CONTRACT,
         Template.SLIP
     )
@@ -113,10 +110,10 @@ if __name__ == '__main__':
     # =========================================================================
     # Purpose: Special Acceptance
     # =========================================================================
-    config = Work(
+    work = Work(
         ROWS,
         DATA_DIR,
-        DST_DIR,
+        DST_PATH,
         Data.CERTIFICATE,
         Template.SPECIAL_ACCEPTANCE
     )
@@ -124,10 +121,10 @@ if __name__ == '__main__':
     # =========================================================================
     # Purpose: Treaty Slips & Treaty Endorsements
     # =========================================================================
-    config = Work(
+    work = Work(
         ROWS,
         DATA_DIR,
-        DST_DIR,
+        DST_PATH,
         Data.CONTRACT,
         Template.SLIP_TREATY
     )
@@ -135,12 +132,12 @@ if __name__ == '__main__':
     # =========================================================================
     # Purpose: Warranty Letters
     # =========================================================================
-    config = Work(
+    work = Work(
         ROWS,
         DATA_DIR,
-        DST_DIR,
+        DST_PATH,
         Data.LETTER,
         Template.LETTER_WARRANTY
     )
 
-    main(config)
+    main(work)

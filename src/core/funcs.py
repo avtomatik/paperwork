@@ -6,18 +6,15 @@ Created on Wed Apr 23 20:50:18 2025
 @author: alexandermikhailov
 """
 
-
 import datetime
-from pathlib import Path
 from zipfile import ZipFile
 
 import pandas as pd
 from mailmerge import MailMerge
 
 from core.classes import Template, Work
-from core.config import (ACCOUNT, ARCHIVE_NAME, FILE_NAME_RESERVED,
-                         MERGE_HOOK, PARTNER_NAME, PREFIX, REF_PLACEHOLDER,
-                         REF_RESERVED)
+from core.config import (ACCOUNT, ARCHIVE_NAME, FILE_NAME_RESERVED, MERGE_HOOK,
+                         PARTNER_NAME, PREFIX, REF_PLACEHOLDER, REF_RESERVED)
 
 
 def business_logic(df: pd.DataFrame) -> pd.DataFrame:
@@ -99,8 +96,8 @@ def generate_file_name(template: Template, row: pd.Series, index: int) -> str:
     return MAP.get(template, 'default.docx')
 
 
-def generate_string_panel(config: Work, two_columned=False) -> list:
-    lines = pd.read_excel(Path(config.dir_src).joinpath(FILE_NAME_RESERVED))
+def generate_string_panel(work: Work, two_columned=False) -> list:
+    lines = pd.read_excel(work.path_src.joinpath(FILE_NAME_RESERVED))
 
     panel = []
 
@@ -149,34 +146,32 @@ def transform_stringify(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def write_to_disk(
-    config: Work,
+    work: Work,
     row: pd.Series,
     index: int,
     map_fields: dict[str, str]
 ) -> None:
     if ARCHIVE_NAME is None:
-        template_file_path = Path(config.dir_src).joinpath(
-            config.template.template_name
-        )
+        template_path = work.path_src.joinpath(work.template.template_name)
     else:
-        template_file_path = ZipFile(
-            Path(config.dir_src).joinpath(ARCHIVE_NAME)
-        ).open(config.template.template_name)
-    with MailMerge(template_file_path) as document:
+        template_path = ZipFile(
+            work.path_src.joinpath(ARCHIVE_NAME)
+        ).open(work.template.template_name)
+    with MailMerge(template_path) as document:
         document.merge(**map_fields)
 
-        if 'cover_note' in config.template.template_name:
-            document.merge_rows(MERGE_HOOK, generate_string_panel())
-        if config.template.template_name == Template.LETTER_WARRANTY:
-            document.merge_rows(MERGE_HOOK, generate_string_panel())
-        if config.template.template_name == Template.LETTER_0x9:
-            document.merge_rows(MERGE_HOOK, generate_string_panel(True))
+        if 'cover_note' in work.template.template_name:
+            document.merge_rows(MERGE_HOOK, generate_string_panel(work))
+        if work.template.template_name == Template.LETTER_WARRANTY:
+            document.merge_rows(MERGE_HOOK, generate_string_panel(work))
+        if work.template.template_name == Template.LETTER_0x9:
+            document.merge_rows(MERGE_HOOK, generate_string_panel(work, True))
 
         document.write(
-            Path(config.dir_dst).joinpath(
+            work.path_dst.joinpath(
                 # =========================================================
                 # Generate File Name
                 # =========================================================
-                generate_file_name(config.template, row, index)
+                generate_file_name(work.template, row, index)
             )
         )
