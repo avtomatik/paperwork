@@ -12,13 +12,13 @@ from pathlib import Path
 import pandas as pd
 
 from core.classes import Data, Template, Work
-from core.funcs import (business_logic, get_paths, transform_stringify,
-                        write_to_disk)
+from core.config import DATA_DIR, DST_DIR, DST_SPC_DIR
+from core.funcs import business_logic, transform_stringify, write_to_disk
 
 
 def main(work: Work) -> None:
     kwargs = {
-        'io': Path(work.source).joinpath(work.data.file_name)
+        'io': Path(work.dir_src).joinpath(work.data_source.file_name)
     }
     df = pd.read_excel(**kwargs).tail(work.num).pipe(business_logic)
     df_formatted = df.copy().pipe(transform_stringify)
@@ -41,7 +41,6 @@ def main(work: Work) -> None:
 
 if __name__ == '__main__':
     ROWS = 1
-    PATHS = get_paths()
 # =============================================================================
 # TODO: Implement Enum for Configuration
 # =============================================================================
@@ -50,8 +49,8 @@ if __name__ == '__main__':
     # =========================================================================
     config = Work(
         ROWS,
-        PATHS[3],
-        PATHS[7],
+        DATA_DIR,
+        DST_SPC_DIR,
         Data.COUNTRY,
         Template.SCOPES
     )
@@ -61,8 +60,8 @@ if __name__ == '__main__':
     # =========================================================================
     config = Work(
         ROWS,
-        PATHS[3],
-        PATHS[-1],
+        DATA_DIR,
+        DST_DIR,
         Data.CONTRACT,
         Template.ADDENDUM
     )
@@ -72,8 +71,8 @@ if __name__ == '__main__':
     # =========================================================================
     config = Work(
         ROWS,
-        PATHS[3],
-        PATHS[-1],
+        DATA_DIR,
+        DST_DIR,
         Data.LETTER,
         Template.LETTER_CEM
     )
@@ -83,8 +82,8 @@ if __name__ == '__main__':
     # =========================================================================
     config = Work(
         ROWS,
-        PATHS[3],
-        PATHS[-1],
+        DATA_DIR,
+        DST_DIR,
         Data.DEBIT_NOTE,
         Template.DEBIT_NOTE
     )
@@ -94,8 +93,8 @@ if __name__ == '__main__':
     # =========================================================================
     config = Work(
         ROWS,
-        PATHS[3],
-        PATHS[-1],
+        DATA_DIR,
+        DST_DIR,
         Data.LETTER,
         Template.LETTER_0x9
     )
@@ -105,8 +104,8 @@ if __name__ == '__main__':
     # =========================================================================
     config = Work(
         ROWS,
-        PATHS[3],
-        PATHS[-1],
+        DATA_DIR,
+        DST_DIR,
         Data.CONTRACT,
         Template.SLIP
     )
@@ -116,8 +115,8 @@ if __name__ == '__main__':
     # =========================================================================
     config = Work(
         ROWS,
-        PATHS[3],
-        PATHS[-1],
+        DATA_DIR,
+        DST_DIR,
         Data.CERTIFICATE,
         Template.SPECIAL_ACCEPTANCE
     )
@@ -127,8 +126,8 @@ if __name__ == '__main__':
     # =========================================================================
     config = Work(
         ROWS,
-        PATHS[3],
-        PATHS[-1],
+        DATA_DIR,
+        DST_DIR,
         Data.CONTRACT,
         Template.SLIP_TREATY
     )
@@ -138,8 +137,8 @@ if __name__ == '__main__':
     # =========================================================================
     config = Work(
         ROWS,
-        PATHS[3],
-        PATHS[-1],
+        DATA_DIR,
+        DST_DIR,
         Data.LETTER,
         Template.LETTER_WARRANTY
     )

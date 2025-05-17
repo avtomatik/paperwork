@@ -49,15 +49,8 @@ num: 100
 
 ### Functions
 
-- get_paths(): Reads a text file (PATHS.txt) and returns a tuple of paths. Each line in the file represents a separate path.
+- to_be_continued(): What It Does.
 
-```
-from pathlib import Path
-
-def get_paths() -> tuple[Path]:
-    paths_file = Path('../paths.txt')
-    with paths_file.open(mode='r', encoding='utf-8') as f:
-        return tuple(Path(line.strip()) for line in f if line.strip())
 ```
 
 ## Contributing

@@ -2,7 +2,7 @@ import datetime
 from dataclasses import dataclass
 from enum import Enum, auto
 
-from core.config import ACCOUNT0
+from core.config import ACCOUNT
 
 
 class Data(Enum):
@@ -51,7 +51,7 @@ class Template(Enum):
         DATE = datetime.date(2022, 8, 12)
 
         if self.value == 'SLIP_TREATY':
-            return f'template_treaty_{ACCOUNT0}{DATE:%Y}_endorsement_{DATE}.docx'
+            return f'template_treaty_{ACCOUNT}{DATE:%Y}_endorsement_{DATE}.docx'
 
         return f'{self.value.lower()}.docx'
 
@@ -59,7 +59,7 @@ class Template(Enum):
 @dataclass
 class Work:
     num: int
-    source: str
-    destination: str
-    data: Data
+    dir_src: str
+    dir_dst: str
+    data_source: Data
     template: Template

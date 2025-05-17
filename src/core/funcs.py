@@ -15,9 +15,9 @@ import pandas as pd
 from mailmerge import MailMerge
 
 from core.classes import Template, Work
-from core.config import (ACCOUNT0, ARCHIVE_NAME, BASE_DIR, FILE_NAME_RESERVED,
+from core.config import (ACCOUNT, ARCHIVE_NAME, FILE_NAME_RESERVED,
                          MERGE_HOOK, PARTNER_NAME, PREFIX, REF_PLACEHOLDER,
-                         RESERVED_REF)
+                         REF_RESERVED)
 
 
 def business_logic(df: pd.DataFrame) -> pd.DataFrame:
@@ -86,7 +86,7 @@ def generate_file_name(template: Template, row: pd.Series, index: int) -> str:
         Template.SLIP: f'{row[23]} {row[10]:%Y} Slip {row[21]}.docx',
         Template.SLIP_TREATY:
         (
-            f'{ACCOUNT0} Primary Treaty {RESERVED_REF} {row[10]:%Y} '
+            f'{ACCOUNT} Primary Treaty {REF_RESERVED} {row[10]:%Y} '
             f'Endorsement {row[3]:04n} '
             f'{row[21].split(";")[-1]}.docx'
         ),
@@ -100,7 +100,7 @@ def generate_file_name(template: Template, row: pd.Series, index: int) -> str:
 
 
 def generate_string_panel(config: Work, two_columned=False) -> list:
-    lines = pd.read_excel(Path(config.source).joinpath(FILE_NAME_RESERVED))
+    lines = pd.read_excel(Path(config.dir_src).joinpath(FILE_NAME_RESERVED))
 
     panel = []
 
@@ -112,12 +112,6 @@ def generate_string_panel(config: Work, two_columned=False) -> list:
         panel.append(formatted_row.iloc[-2:].to_dict())
 
     return panel
-
-
-def get_paths(file_name: str = 'paths.txt') -> tuple[Path]:
-    file_path = BASE_DIR.joinpath('core').joinpath(file_name)
-    with file_path.open(encoding='utf-8') as f:
-        return tuple(Path(line.strip()) for line in f if line.strip())
 
 
 def transform_stringify(df: pd.DataFrame) -> pd.DataFrame:
@@ -161,14 +155,14 @@ def write_to_disk(
     map_fields: dict[str, str]
 ) -> None:
     if ARCHIVE_NAME is None:
-        template_object = Path(config.source).joinpath(
+        template_file_path = Path(config.dir_src).joinpath(
             config.template.template_name
         )
     else:
-        template_object = ZipFile(
-            Path(config.source).joinpath(ARCHIVE_NAME)
+        template_file_path = ZipFile(
+            Path(config.dir_src).joinpath(ARCHIVE_NAME)
         ).open(config.template.template_name)
-    with MailMerge(template_object) as document:
+    with MailMerge(template_file_path) as document:
         document.merge(**map_fields)
 
         if 'cover_note' in config.template.template_name:
@@ -179,7 +173,7 @@ def write_to_disk(
             document.merge_rows(MERGE_HOOK, generate_string_panel(True))
 
         document.write(
-            Path(config.destination).joinpath(
+            Path(config.dir_dst).joinpath(
                 # =========================================================
                 # Generate File Name
                 # =========================================================
