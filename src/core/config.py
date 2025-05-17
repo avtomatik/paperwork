@@ -5,13 +5,12 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
+DATA_DIR = BASE_DIR / 'data'
 
-DATA_DIR = os.getenv('DATA_DIR')
 DST_DIR = os.getenv('DST_DIR')
 DST_SPC_DIR = os.getenv('DST_SPC_DIR')
 
-DATA_DIR = Path(DATA_DIR)
 DST_PATH = Path(DST_DIR)
 DST_SPC_PATH = Path(DST_SPC_DIR)
 

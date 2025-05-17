@@ -13,8 +13,9 @@ import pandas as pd
 from mailmerge import MailMerge
 
 from core.classes import Template, Work
-from core.config import (ACCOUNT, ARCHIVE_NAME, FILE_NAME_RESERVED, MERGE_HOOK,
-                         PARTNER_NAME, PREFIX, REF_PLACEHOLDER, REF_RESERVED)
+from core.config import (ACCOUNT, ARCHIVE_NAME, DATA_DIR, FILE_NAME_RESERVED,
+                         MERGE_HOOK, PARTNER_NAME, PREFIX, REF_PLACEHOLDER,
+                         REF_RESERVED)
 
 
 def business_logic(df: pd.DataFrame) -> pd.DataFrame:
@@ -96,8 +97,10 @@ def generate_file_name(template: Template, row: pd.Series, index: int) -> str:
     return MAP.get(template, 'default.docx')
 
 
-def generate_string_panel(work: Work, two_columned=False) -> list:
-    lines = pd.read_excel(work.path_src.joinpath(FILE_NAME_RESERVED))
+def generate_string_panel(two_columned=False) -> list:
+    file_path = DATA_DIR / FILE_NAME_RESERVED
+
+    lines = pd.read_excel(file_path)
 
     panel = []
 
@@ -161,11 +164,11 @@ def write_to_disk(
         document.merge(**map_fields)
 
         if 'cover_note' in work.template.template_name:
-            document.merge_rows(MERGE_HOOK, generate_string_panel(work))
+            document.merge_rows(MERGE_HOOK, generate_string_panel())
         if work.template.template_name == Template.LETTER_WARRANTY:
-            document.merge_rows(MERGE_HOOK, generate_string_panel(work))
+            document.merge_rows(MERGE_HOOK, generate_string_panel())
         if work.template.template_name == Template.LETTER_0x9:
-            document.merge_rows(MERGE_HOOK, generate_string_panel(work, True))
+            document.merge_rows(MERGE_HOOK, generate_string_panel(True))
 
         document.write(
             work.path_dst.joinpath(
