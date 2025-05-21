@@ -52,7 +52,9 @@ class Template(Enum):
         DATE = datetime.date(2022, 8, 12)
 
         if self.value == 'SLIP_TREATY':
-            return f'template_treaty_{ACCOUNT}{DATE:%Y}_endorsement_{DATE}.docx'
+            return (
+                f'template_treaty_{ACCOUNT}{DATE:%Y}_endorsement_{DATE}.docx'
+            )
 
         return f'{self.value.lower()}.docx'
 

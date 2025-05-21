@@ -1,0 +1,55 @@
+works:
+- data_dir: ${DATA_DIR}
+  data_source: COUNTRY
+  dst_path: ${DST_SPC_PATH}
+  name: Acts & Scopes
+  rows: 1
+  template: SCOPES
+- data_dir: ${DATA_DIR}
+  data_source: CONTRACT
+  dst_path: ${DST_PATH}
+  name: Addendums & Endorsements
+  rows: 1
+  template: ADDENDUM
+- data_dir: ${DATA_DIR}
+  data_source: LETTER
+  dst_path: ${DST_PATH}
+  name: Confirmation Letters
+  rows: 1
+  template: LETTER_CEM
+- data_dir: ${DATA_DIR}
+  data_source: DEBIT_NOTE
+  dst_path: ${DST_PATH}
+  name: Debit Notes
+  rows: 1
+  template: DEBIT_NOTE
+- data_dir: ${DATA_DIR}
+  data_source: LETTER
+  dst_path: ${DST_PATH}
+  name: '0x9'
+  rows: 1
+  template: LETTER_0x9
+- data_dir: ${DATA_DIR}
+  data_source: CONTRACT
+  dst_path: ${DST_PATH}
+  name: Slips & Cover Notes
+  rows: 1
+  template: SLIP
+- data_dir: ${DATA_DIR}
+  data_source: CERTIFICATE
+  dst_path: ${DST_PATH}
+  name: Special Acceptance
+  rows: 1
+  template: SPECIAL_ACCEPTANCE
+- data_dir: ${DATA_DIR}
+  data_source: CONTRACT
+  dst_path: ${DST_PATH}
+  name: Treaty Slips & Treaty Endorsements
+  rows: 1
+  template: SLIP_TREATY
+- data_dir: ${DATA_DIR}
+  data_source: LETTER
+  dst_path: ${DST_PATH}
+  name: Warranty Letters
+  rows: 1
+  template: LETTER_WARRANTY

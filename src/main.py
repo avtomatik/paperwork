@@ -8,9 +8,10 @@ Created on Mon Jun 12 21:43:23 2023
 
 import pandas as pd
 
-from core.classes import Data, Template, Work
-from core.config import DATA_DIR, DST_PATH, DST_SPC_PATH
-from core.funcs import business_logic, transform_stringify, write_to_disk
+from core.classes import Work
+from core.config import BASE_DIR
+from core.funcs import (business_logic, create_work_from_config, load_config,
+                        transform_stringify, write_to_disk)
 
 
 def main(work: Work) -> None:
@@ -37,107 +38,10 @@ def main(work: Work) -> None:
 
 
 if __name__ == '__main__':
-    ROWS = 1
-# =============================================================================
-# TODO: Implement Enum for Configuration
-# =============================================================================
-    # =========================================================================
-    # Purpose: Acts & Scopes
-    # =========================================================================
-    work = Work(
-        ROWS,
-        DATA_DIR,
-        DST_SPC_PATH,
-        Data.COUNTRY,
-        Template.SCOPES
-    )
+    config_path = BASE_DIR / 'config.yml'
 
-    # =========================================================================
-    # Purpose: Addendums & Endorsements
-    # =========================================================================
-    work = Work(
-        ROWS,
-        DATA_DIR,
-        DST_PATH,
-        Data.CONTRACT,
-        Template.ADDENDUM
-    )
+    config = load_config(config_path)
 
-    # =========================================================================
-    # Purpose: Confirmation Letters
-    # =========================================================================
-    work = Work(
-        ROWS,
-        DATA_DIR,
-        DST_PATH,
-        Data.LETTER,
-        Template.LETTER_CEM
-    )
-
-    # =========================================================================
-    # Purpose: Debit Notes
-    # =========================================================================
-    work = Work(
-        ROWS,
-        DATA_DIR,
-        DST_PATH,
-        Data.DEBIT_NOTE,
-        Template.DEBIT_NOTE
-    )
-
-    # =========================================================================
-    # Purpose: 0x9
-    # =========================================================================
-    work = Work(
-        ROWS,
-        DATA_DIR,
-        DST_PATH,
-        Data.LETTER,
-        Template.LETTER_0x9
-    )
-
-    # =========================================================================
-    # Purpose: Slips & Cover Notes
-    # =========================================================================
-    work = Work(
-        ROWS,
-        DATA_DIR,
-        DST_PATH,
-        Data.CONTRACT,
-        Template.SLIP
-    )
-
-    # =========================================================================
-    # Purpose: Special Acceptance
-    # =========================================================================
-    work = Work(
-        ROWS,
-        DATA_DIR,
-        DST_PATH,
-        Data.CERTIFICATE,
-        Template.SPECIAL_ACCEPTANCE
-    )
-
-    # =========================================================================
-    # Purpose: Treaty Slips & Treaty Endorsements
-    # =========================================================================
-    work = Work(
-        ROWS,
-        DATA_DIR,
-        DST_PATH,
-        Data.CONTRACT,
-        Template.SLIP_TREATY
-    )
-
-    # =========================================================================
-    # Purpose: Warranty Letters
-    # =========================================================================
-    work = Work(
-        ROWS,
-        DATA_DIR,
-        DST_PATH,
-        Data.LETTER,
-        Template.LETTER_WARRANTY
-    )
-
-    main(work)
+    for work_config in config['works']:
+        work = create_work_from_config(work_config)
+        main(work)

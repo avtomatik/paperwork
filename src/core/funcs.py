@@ -7,12 +7,14 @@ Created on Wed Apr 23 20:50:18 2025
 """
 
 import datetime
+from pathlib import Path
 from zipfile import ZipFile
 
 import pandas as pd
+import yaml
 from mailmerge import MailMerge
 
-from core.classes import Template, Work
+from core.classes import Data, Template, Work
 from core.config import (ACCOUNT, ARCHIVE_NAME, DATA_DIR, FILE_NAME_RESERVED,
                          MERGE_HOOK, PARTNER_NAME, PREFIX, REF_PLACEHOLDER,
                          REF_RESERVED)
@@ -129,9 +131,9 @@ def transform_stringify(df: pd.DataFrame) -> pd.DataFrame:
         # For Monetary Values
         # =====================================================================
         df.loc[:, column] = df.loc[:, column].apply(lambda _: f'{_:,.2f}')
-        # # =====================================================================
+        # # ===================================================================
         # # For Percentage Values
-        # # =====================================================================
+        # # ===================================================================
         # df_formatted.loc[:, column] = df_formatted.loc[:, column].apply(
         #     lambda _: f'{_:.4%}'
         # )
@@ -172,9 +174,27 @@ def write_to_disk(
 
         document.write(
             work.path_dst.joinpath(
-                # =========================================================
+                # =============================================================
                 # Generate File Name
-                # =========================================================
+                # =============================================================
                 generate_file_name(work.template, row, index)
             )
         )
+
+
+def load_config(config_path: Path):
+    with config_path.open() as f:
+        return yaml.safe_load(f)
+
+
+def create_work_from_config(work_config):
+    # =========================================================================
+    # TODO: Check If Making This a Method of Class
+    # =========================================================================
+    return Work(
+        work_config['rows'],
+        work_config['data_dir'],
+        work_config['dst_path'],
+        Data[work_config['data_source']],
+        Template[work_config['template']]
+    )
